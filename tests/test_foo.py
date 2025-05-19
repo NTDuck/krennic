@@ -1,5 +1,5 @@
-import krennic
+import krennic.foo
 
 
 def test_foo():
-    assert krennic.foo() == "Hello world"
+    assert krennic.foo.foo() == "Hello world"
