@@ -5,6 +5,9 @@ on:
     branches:
       - "*"
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
@@ -41,7 +44,7 @@ jobs:
 
       - name: Format
         run: |
-          python -m black ${{ matrix.source-dir-path }}
+          python -m black --check ${{ matrix.source-dir-path }}
   
       - name: Lint
         run: |
