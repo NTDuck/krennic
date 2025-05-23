@@ -33,6 +33,6 @@ def load_global_temperatures_dataset() -> Dataset:
 
 if __name__ == "__main__":
     dataset = load_global_temperatures_dataset()
-    dataset.plot()
+    dataset.plot(figsize=(20, 1))
 
     plt.show()
