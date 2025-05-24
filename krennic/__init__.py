@@ -1,8 +1,7 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
-from evaluators import MaeEvaluator, MseEvaluator, ResidualEvaluator, RmseEvaluator
-from models.regression import LinearRegressionModel, RegressionModel
+from .evaluators import MaeEvaluator, MseEvaluator, ResidualEvaluator, RmseEvaluator
+from .models.regression import RegressionModel
 
 
 class Result:
@@ -26,44 +25,18 @@ def apply(df: pd.DataFrame, x_column: str, y_column: str, regression_model_cls: 
     training_df = df.iloc[:cutoff]
     testing_df = df.iloc[cutoff:]
 
-    x = training_df[x_column].to_numpy()
-    y = training_df[y_column].to_numpy()
-    regression_model = regression_model_cls(x, y)
+    training_df_x = training_df[x_column].to_numpy()
+    training_df_y = training_df[y_column].to_numpy()
+    regression_model = regression_model_cls(x=training_df_x, y=training_df_y)
 
     testing_df[f"predicted-{y_column}"] = regression_model.fit(testing_df[x_column])
-    predicted_y = testing_df[f"predicted-{y_column}"]
+    testing_df_predicted_y = testing_df[f"predicted-{y_column}"]
+    testing_df_actual_y = testing_df[y_column]
 
-    testing_df["residual"] = ResidualEvaluator().evaluate(predicted=predicted_y, actual=y)
+    testing_df["residual"] = ResidualEvaluator().evaluate(predicted=testing_df_predicted_y, actual=testing_df_actual_y)
     
-    mse = MseEvaluator().evaluate(predicted=predicted_y, actual=y)
-    mae = MaeEvaluator().evaluate(predicted=predicted_y, actual=y)
-    rmse = RmseEvaluator().evaluate(predicted=predicted_y, actual=y)
+    mse = MseEvaluator().evaluate(predicted=testing_df_predicted_y, actual=testing_df_actual_y)
+    mae = MaeEvaluator().evaluate(predicted=testing_df_predicted_y, actual=testing_df_actual_y)
+    rmse = RmseEvaluator().evaluate(predicted=testing_df_predicted_y, actual=testing_df_actual_y)
 
     return Result(training_df, testing_df, mse, mae, rmse)
-
-
-def load_global_temperatures_df() -> pd.DataFrame:
-    dataset = pd.read_csv(
-        filepath_or_buffer="resources/datasets/GlobalTemperatures.csv",
-        usecols=["dt", "LandAverageTemperature"], parse_dates=["dt"],
-    )
-
-    dataset.rename(columns={
-        "dt": "timestamp",
-        "LandAverageTemperature": "temperature",
-    }, inplace=True)
-
-    dataset.set_index("timestamp", inplace=True)
-
-    return dataset
-
-
-if __name__ == "__main__":
-    pd.options.mode.copy_on_write = True
-    
-    df = load_global_temperatures_df()
-    df.plot()
-    # result = apply(df, x_column="timestamp", y_column="temperature", regression_model_cls=LinearRegressionModel)
-
-    # result.testing_df.plot()
-    plt.show()
