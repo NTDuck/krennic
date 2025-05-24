@@ -18,8 +18,6 @@ def load_df() -> pd.DataFrame:
     }, inplace=True)
     dataset["timestamp-int64"] = dataset["timestamp"].map(datetime.toordinal)
 
-    # dataset.set_index("timestamp", inplace=True)
-
     return dataset
 
 
@@ -29,5 +27,8 @@ if __name__ == "__main__":
     df = load_df()
     result = apply(df, x_column="timestamp-int64", y_column="temperature", regression_model_cls=LinearRegressionModel)
 
-    result.testing_df.plot(x="timestamp", y="temperature")
+    print(result.testing_df.describe())
+    print(f"MSE: {result.mse}, MAE: {result.mae}, RMSE: {result.rmse}")
+
+    result.testing_df.plot(x="timestamp", y=["temperature", "predicted-temperature"])
     plt.show()
