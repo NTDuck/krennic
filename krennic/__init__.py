@@ -3,21 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def least_squares_fit(x: np.ndarray, y: np.ndarray):
-    n = len(x)
-    assert n == len(y)
-
-    sum_x = np.sum(x)
-    sum_y = np.sum(y)
-    sum_xy = np.sum(x * y)
-    sum_xx = np.sum(np.pow(x, 2))    
-
-    a = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - np.pow(sum_x, 2))
-    b = (sum_xx * sum_y - sum_xy * sum_x) / (n * sum_xx - np.pow(sum_x, 2))
-
-    return a, b
-    
-
 def load_global_temperatures_dataset() -> pd.DataFrame:
     dataset = pd.read_csv(
         filepath_or_buffer="resources/datasets/GlobalTemperatures.csv",
@@ -45,7 +30,8 @@ if __name__ == "__main__":
     training_dataset = dataset.iloc[:cutoff].dropna(subset=["temperature"])
     testing_dataset = dataset.iloc[cutoff:].dropna(subset=["temperature"])
 
-    a, b = least_squares_fit(
+    regression_model = 
+    a, b = least_squares_fit_linear(
         x=training_dataset.index.map(pd.Timestamp.toordinal).to_numpy(),
         y=training_dataset["temperature"].to_numpy(),
     )
