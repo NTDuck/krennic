@@ -8,7 +8,7 @@ from krennic.models.regression import LinearRegressionModel, PolynomialRegressio
 
 def load_df() -> pd.DataFrame:
     dataset = pd.read_csv(
-        filepath_or_buffer="resources/datasets/GlobalTemperatures.csv",
+        "resources/datasets/GlobalTemperatures.csv",
         usecols=["dt", "LandAverageTemperature"], parse_dates=["dt"],
     )
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     
     df = load_df()
     # result = apply(df, x_column="timestamp-int64", y_column="temperature", regression_model=LinearRegressionModel())
-    result = apply(df, x_column="timestamp-int64", y_column="temperature", regression_model=PolynomialRegressionModel(degree=100))
+    result = apply(df, x_column="timestamp-int64", y_column="temperature", regression_model=PolynomialRegressionModel(degree=4))
 
     print(result.testing_df.describe())
     print(f"MSE: {result.mse}, MAE: {result.mae}, RMSE: {result.rmse}")
