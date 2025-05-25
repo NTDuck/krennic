@@ -13,7 +13,7 @@ class Result:
         self.rmse = rmse
 
 
-def apply(df: pd.DataFrame, x_column: str, y_column: str, regression_model_cls: type[RegressionModel]) -> Result:
+def apply(df: pd.DataFrame, x_column: str, y_column: str, regression_model: RegressionModel) -> Result:
     assert x_column in df
     assert y_column in df
 
@@ -27,7 +27,7 @@ def apply(df: pd.DataFrame, x_column: str, y_column: str, regression_model_cls: 
 
     training_df_x = training_df[x_column].to_numpy()
     training_df_y = training_df[y_column].to_numpy()
-    regression_model = regression_model_cls(x=training_df_x, y=training_df_y)
+    regression_model.build(x=training_df_x, y=training_df_y)
 
     testing_df[f"predicted-{y_column}"] = regression_model.fit(testing_df[x_column])
     testing_df_predicted_y = testing_df[f"predicted-{y_column}"]
