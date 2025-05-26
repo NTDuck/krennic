@@ -5,5 +5,5 @@ Datasets:
 
 How to run stuff:
 ```cmd
-python -m scripts.apply_global_temperatures
+python -m scripts.plot --degree 1 --dataset hanoi-aqi-weather-data.csv
 ```

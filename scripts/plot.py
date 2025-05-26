@@ -16,14 +16,23 @@ def load_global_temperatures_df() -> pd.DataFrame:
         "dt": "timestamp",
         "LandAverageTemperature": "temperature",
     }, inplace=True)
-    dataset["timestamp-int64"] = dataset["timestamp"].map(datetime.toordinal)
 
     return dataset
 
 def load_hanoi_aqi_weather_data_df() -> pd.DataFrame:
-    pass
+    dataset = pd.read_csv(
+        "resources/datasets/hanoi-aqi-weather-data.csv",
+        usecols=["Local Time", "Temperature"], parse_dates=["Local Time"],
+    )
 
-def plot(df: pd.DataFrame, x_column: str, y_column: str, regression_model: RegressionModel, training_proportion: float):
+    dataset.rename(columns={
+        "Local Time": "timestamp",
+        "Temperature": "temperature",
+    }, inplace=True)
+
+    return dataset
+
+def apply(df: pd.DataFrame, x_column: str, y_column: str, regression_model: RegressionModel, training_proportion: float) -> pd.DataFrame:
     pd.options.mode.copy_on_write = True
 
     assert x_column in df
@@ -42,10 +51,7 @@ def plot(df: pd.DataFrame, x_column: str, y_column: str, regression_model: Regre
     testing_df[f"predicted-{y_column}"] = regression_model.fit(testing_df[x_column])
 
     df = pd.concat([training_df, testing_df])
-    df.plot(x=x_column, y=[f"predicted-{y_column}", y_column])
-
-    plt.show()
-
+    return df
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -54,15 +60,21 @@ if __name__ == "__main__":
         "GlobalTemperatures.csv",
         "hanoi-aqi-weather-data.csv",
     ])
-    parser.add_argument("--training-proportion", type=float, required=False, default=0.5)
+    parser.add_argument("--training-proportion", type=float, required=False, default=0.9)
 
     args = parser.parse_args()
 
     if args.dataset == "GlobalTemperatures.csv":
         df = load_global_temperatures_df()
     elif args.dataset == "hanoi-aqi-weather-data.csv":
-        df = ...
+        df = load_hanoi_aqi_weather_data_df()
 
     regression_model = PolynomialRegressionModel(degree=args.degree)
 
-    plot(df, x_column="timestamp-int64", y_column="temperature", regression_model=regression_model, training_proportion=args.training_proportion)
+    df["timestamp-int64"] = df["timestamp"].map(datetime.toordinal)
+    df = apply(df, x_column="timestamp-int64", y_column="temperature", regression_model=regression_model, training_proportion=args.training_proportion)
+    del df["timestamp-int64"]
+    
+    df.plot(x="timestamp", y=["predicted-temperature", "temperature"])
+    plt.tight_layout()
+    plt.show()
