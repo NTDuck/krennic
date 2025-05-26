@@ -7,4 +7,5 @@ How to run stuff:
 ```cmd
 python -m scripts.plot --degree 1 --dataset hanoi-aqi-weather-data.csv
 python -m scripts.compare --degrees-start 1 --degrees-stop 1000 --dataset hanoi-aqi-weather-data.csv
+python -m scripts.plot_compare
 ```
