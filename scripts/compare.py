@@ -52,7 +52,11 @@ def apply(df: pd.DataFrame, x_column: str, y_column: str, degrees: list[int], tr
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--degrees', nargs='+', type=int)
+
+    parser.add_argument("--degrees", nargs="+", type=int, required=False)
+    parser.add_argument("--degrees-start", type=int, required=False)
+    parser.add_argument("--degrees-stop", type=int, required=False)
+
     parser.add_argument("--dataset", type=str, required=True, choices=[
         "GlobalTemperatures.csv",
         "hanoi-aqi-weather-data.csv",
@@ -61,12 +65,17 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if args.degrees is not None:
+        degrees = args.degrees
+    elif args.degrees_start is not None and args.degrees_stop is not None:
+        degrees = list(range(args.degrees_start, args.degrees_stop + 1))
+
     if args.dataset == "GlobalTemperatures.csv":
         df = load_global_temperatures_df()
     elif args.dataset == "hanoi-aqi-weather-data.csv":
         df = load_hanoi_aqi_weather_data_df()
 
     df["timestamp-int64"] = df["timestamp"].map(datetime.toordinal)
-    df = apply(df, x_column="timestamp-int64", y_column="temperature", degrees=args.degrees, training_proportion=args.training_proportion)
+    df = apply(df, x_column="timestamp-int64", y_column="temperature", degrees=degrees, training_proportion=args.training_proportion)
     
     df.to_csv(f"out/compare-{args.dataset}")
