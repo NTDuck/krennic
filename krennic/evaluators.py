@@ -28,11 +28,10 @@ class MseEvaluator(GlobalErrorEvaluator):
 class MaeEvaluator(GlobalErrorEvaluator):
     def evaluate(self, predicted: np.ndarray, actual: np.ndarray) -> float:
         residual = ResidualEvaluator().evaluate(predicted, actual)
-        return np.mean(np.pow(residual, 2))
+        return np.mean(np.abs(residual))
 
 
 class RmseEvaluator(GlobalErrorEvaluator):
     def evaluate(self, predicted: np.ndarray, actual: np.ndarray) -> float:
         mse = MseEvaluator().evaluate(predicted, actual)
         return np.sqrt(mse)
-
