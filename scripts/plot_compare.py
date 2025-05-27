@@ -18,12 +18,12 @@ if __name__ == "__main__":
         "rmse",
     ]
 
-    # for metric in metrics:
-    #     best_row = df.loc[df[metric].idxmin()]
-    #     degree = best_row["polynomial-regression-model-degree"]
-    #     value = best_row[metric]
-    #     print(f"Best degree for {metric}: {degree} (value = {value})")
-
     for metric in metrics:
-        df.plot(x="polynomial-regression-model-degree", y=metric)
+        best_row = df.loc[df[metric].idxmin()]
+        degree = best_row["polynomial-regression-model-degree"]
+        value = best_row[metric]
+        print(f"Best degree for {metric}: {degree} (value = {value})")
+
+    # for metric in metrics:
+    #     df.plot(x="polynomial-regression-model-degree", y=metric)
     plt.show()

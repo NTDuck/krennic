@@ -76,6 +76,9 @@ if __name__ == "__main__":
         df = load_hanoi_aqi_weather_data_df()
 
     df["timestamp-int64"] = df["timestamp"].map(datetime.toordinal)
-    df = apply(df, x_column="timestamp-int64", y_column="temperature", degrees=degrees, training_proportion=args.training_proportion)
+    df["timestamp-int64-norm"] = (df["timestamp-int64"] - np.mean(df["timestamp-int64"])) / np.std(df["timestamp-int64"])
+    df["temperature-norm"] = df["temperature"] - np.mean(df["temperature"]) / np.std(df["temperature"])
+
+    df = apply(df, x_column="timestamp-int64-norm", y_column="temperature-norm", degrees=degrees, training_proportion=args.training_proportion)
     
     df.to_csv(f"out/compare-{args.dataset}")
