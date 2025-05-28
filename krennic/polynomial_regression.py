@@ -7,6 +7,7 @@ import pandas as pd
 def fit_polynomial_regression(df: pd.DataFrame, x_column: str, y_column: str, degree: int, new_y_column: Optional[str] = None) -> pd.DataFrame:
     new_y_column = new_y_column or y_column
     df[new_y_column] = __fit_polynomial_regression(x=df[x_column], y=df[y_column], degree=degree)
+    return df
 
 def __fit_polynomial_regression(x: np.ndarray, y: np.ndarray, degree: int):
     assert len(x) == len(y)
