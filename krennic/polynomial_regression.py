@@ -1,15 +1,20 @@
-from typing import Optional
+from typing import Callable
 import numpy as np
 import pandas as pd
 
 
-# TODO Impl Gaussian noise
-def fit_polynomial_regression(df: pd.DataFrame, x_column: str, y_column: str, degree: int, new_y_column: Optional[str] = None) -> pd.DataFrame:
-    new_y_column = new_y_column or y_column
-    df[new_y_column] = __fit_polynomial_regression(x=df[x_column], y=df[y_column], degree=degree)
+type PolynomialRegressionModel = Callable[[float], float]
+
+
+def apply_polynomial_regression_model(df: pd.DataFrame, x_column: str, y_column: str, model: PolynomialRegressionModel) -> pd.DataFrame:
+    df[y_column] = model(df[x_column])
     return df
 
-def __fit_polynomial_regression(x: np.ndarray, y: np.ndarray, degree: int):
+# TODO Impl Gaussian noise
+def train_polynomial_regression_model(df: pd.DataFrame, x_column: str, y_column: str, degree: int) -> PolynomialRegressionModel:
+    return __train_polynomial_regression_model(x=df[x_column], y=df[y_column], degree=degree)
+
+def __train_polynomial_regression_model(x: np.ndarray, y: np.ndarray, degree: int):
     assert len(x) == len(y)
 
     # Naming conventions from https://en.wikipedia.org/wiki/Polynomial_regression
@@ -20,4 +25,4 @@ def __fit_polynomial_regression(x: np.ndarray, y: np.ndarray, degree: int):
 
     # `axis=0` sums across polynomial terms, not data points
     # This avoids collapsing everything into a single scalar
-    return np.sum([parameter_vector[i] * (x ** i) for i in range(degree + 1)], axis=0)
+    return lambda x_: np.sum([parameter_vector[i] * (x_ ** i) for i in range(degree + 1)], axis=0)
