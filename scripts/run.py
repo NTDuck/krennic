@@ -19,7 +19,7 @@ def split_into_training_and_testing(df: pd.DataFrame, training_proportion: float
 
 
 if __name__ == "__main__":
-    DEGREE = 4
+    DEGREE = 10
 
     df = (
         pd.read_csv(
@@ -45,11 +45,11 @@ if __name__ == "__main__":
     rmse = evaluate_rmse(y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"])
 
     axes = df.plot(x="timestamp", y="temperature", color="blue", label="Temperature")
-    training_df.plot(x="timestamp", y="temperature-polyfit", color="orange", label="Prediction", ax=axes)
-    testing_df.plot(x="timestamp", y="temperature-polyfit", color="red", label="Prediction", ax=axes)
-    axes.axvline(x=training_df["timestamp"].iloc[-1], color="gray", linestyle="--")
+    training_df.plot(x="timestamp", y="temperature-polyfit", color="orange", label="Prediction (training)", ax=axes)
+    testing_df.plot(x="timestamp", y="temperature-polyfit", color="red", label="Prediction (testing)", ax=axes)
 
-    plt.text(0.97, 0.03, f"MAE = {mae:.2f}\nMSE = {mse:.2f}\nRMSE = {rmse:.2f}",
+    axes.axvline(x=training_df["timestamp"].iloc[-1], color="gray", linestyle="--")
+    axes.text(0.97, 0.03, f"MAE = {mae:.2f}\nMSE = {mse:.2f}\nRMSE = {rmse:.2f}",
              transform=axes.transAxes, horizontalalignment="right", verticalalignment="bottom",
              fontsize=10, bbox=dict(facecolor='white', alpha=0.7))
     
