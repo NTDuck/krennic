@@ -19,7 +19,7 @@ def split_into_training_and_testing(df: pd.DataFrame, training_proportion: float
 
 
 if __name__ == "__main__":
-    DEGREE = 10
+    DEGREE = 2
 
     df = (
         pd.read_csv(
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     axes.axvline(x=training_df["timestamp"].iloc[-1], color="gray", linestyle="--")
     axes.text(0.97, 0.03, f"MAE = {mae:.2f}\nMSE = {mse:.2f}\nRMSE = {rmse:.2f}",
              transform=axes.transAxes, horizontalalignment="right", verticalalignment="bottom",
-             fontsize=10, bbox=dict(facecolor='white', alpha=0.7))
+             fontsize=10, bbox=dict(facecolor="white", alpha=0.7))
     
     plt.tight_layout()
     plt.show()
