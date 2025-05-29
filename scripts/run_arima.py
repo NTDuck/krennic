@@ -12,20 +12,31 @@ pd.options.mode.copy_on_write = True
 
 if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
+
+    # Hyperparameters
     ARIMA_ORDER = (2, 1, 2)
 
     df = (
+        # pd.read_csv(
+        #     "resources/datasets/GlobalTemperatures.csv",
+        #     usecols=["dt", "LandAverageTemperature"], parse_dates=["dt"],
+        # )
+        # .rename(columns={
+        #     "dt": "timestamp",
+        #     "LandAverageTemperature": "temperature",
+        # })
         pd.read_csv(
-            "resources/datasets/GlobalTemperatures.csv",
-            usecols=["dt", "LandAverageTemperature"], parse_dates=["dt"],
+            "resources/datasets/hanoi-aqi-weather-data.csv",
+            usecols=["Local Time", "Temperature"], parse_dates=["Local Time"],
         )
         .rename(columns={
-            "dt": "timestamp",
-            "LandAverageTemperature": "temperature",
+            "Local Time": "timestamp",
+            "Temperature": "temperature",
         })
         .dropna()
         .set_index("timestamp")
-        .asfreq("MS")
+        # .asfreq("MS")
+        .asfreq("h")
     )
 
     training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)

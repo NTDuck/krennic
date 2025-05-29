@@ -13,13 +13,21 @@ if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
 
     df = (
+        # pd.read_csv(
+        #     "resources/datasets/GlobalTemperatures.csv",
+        #     usecols=["dt", "LandAverageTemperature"], parse_dates=["dt"],
+        # )
+        # .rename(columns={
+        #     "dt": "timestamp",
+        #     "LandAverageTemperature": "temperature",
+        # })
         pd.read_csv(
-            "resources/datasets/GlobalTemperatures.csv",
-            usecols=["dt", "LandAverageTemperature"], parse_dates=["dt"],
+            "resources/datasets/hanoi-aqi-weather-data.csv",
+            usecols=["Local Time", "Temperature"], parse_dates=["Local Time"],
         )
         .rename(columns={
-            "dt": "timestamp",
-            "LandAverageTemperature": "temperature",
+            "Local Time": "timestamp",
+            "Temperature": "temperature",
         })
         .dropna()
     )
