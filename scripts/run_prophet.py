@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)
     
-    model = df.pipe(train_prophet_model, x_column="timestamp", y_column="temperature")  # !
+    model = training_df.pipe(train_prophet_model, x_column="timestamp", y_column="temperature")
     training_df = training_df.pipe(apply_prophet_model, x_column="timestamp", y_column="temperature-prophet", model=model)
     testing_df = testing_df.pipe(apply_prophet_model, x_column="timestamp", y_column="temperature-prophet", model=model)
     
