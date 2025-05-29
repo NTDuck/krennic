@@ -1,3 +1,4 @@
+from datetime import datetime
 from matplotlib import pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -62,9 +63,8 @@ if __name__ == "__main__":
 
 
     metrics_df = pd.DataFrame(metrics)
+    metrics_df.to_csv(f"resources/metrics/hanoi-aqi-weather-data.ridge-regression.{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv")
 
-    # row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
-    # row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
     row_with_min_rmse = metrics_df.loc[metrics_df["rmse"].idxmin()]
 
     axes = sns.heatmap(data=metrics_df.pivot(index="degree", columns="λ", values="rmse"),

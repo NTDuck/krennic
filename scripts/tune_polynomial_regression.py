@@ -1,3 +1,4 @@
+from datetime import datetime
 from matplotlib import pyplot as plt
 import pandas as pd
 
@@ -57,6 +58,7 @@ if __name__ == "__main__":
         })
 
     metrics_df = pd.DataFrame(metrics)
+    metrics_df.to_csv(f"resources/metrics/hanoi-aqi-weather-data.polynomial-regression.{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv")
 
     row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
     row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
