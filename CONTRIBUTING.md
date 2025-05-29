@@ -6,4 +6,13 @@ Datasets:
 How to run stuff:
 ```cmd
 
+=======
+python -m scripts.run_polynomial_regression
+python -m scripts.run_ridge_regression
+python -m scripts.run_arima
+python -m scripts.run_prophet
+
+python -m scripts.tune_polynomial_regression
+python -m scripts.tune_ridge_regression
+python -m scripts.tune_arima
 ```
