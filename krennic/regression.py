@@ -34,3 +34,9 @@ def __train_ridge_regression_model(x: np.ndarray, y: np.ndarray, degree: int, λ
     β = np.linalg.inv(X.T @ X + λ * I) @ X.T @ y
 
     return lambda x: np.vander(x, N=degree + 1, increasing=True) @ β
+
+def train_lasso_regression_model(df: pd.DataFrame, x_column: str, y_column: str, degree: int, λ: float) -> RegressionModel:
+    return __train_lasso_regression_model(x=df[x_column], y=df[y_column], degree=degree, λ=λ)
+
+def __train_lasso_regression_model(x: np.ndarray, y: np.ndarray, degree: int):
+    assert len(x) == len(y)
