@@ -29,8 +29,7 @@ if __name__ == "__main__":
             "dt": "timestamp",
             "LandAverageTemperature": "temperature",
         })
-        # .dropna()
-        .interpolate()
+        .dropna()
     )
 
     training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)
