@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 
 from krennic.arima import apply_arima_model, train_arima_model
 from krennic.evaluation import evaluate_mae, evaluate_mse, evaluate_rmse
-from krennic.normalization import apply_min_max_normalization
 from krennic.utils import split_into_training_and_testing
 
 
@@ -53,8 +52,8 @@ if __name__ == "__main__":
 
     axes.axvline(x=training_df.index[-1], color="gray", linestyle="--")
     axes.text(0.97, 0.03, f"MAE = {mae:.2f}\nMSE = {mse:.2f}\nRMSE = {rmse:.2f}",
-            transform=axes.transAxes, ha="right", va="bottom",
-            fontsize=10, bbox=dict(facecolor="white", alpha=0.7))
+              transform=axes.transAxes, ha="right", va="bottom",
+              fontsize=10, bbox=dict(facecolor="white", alpha=0.7))
 
     plt.tight_layout()
     plt.show()

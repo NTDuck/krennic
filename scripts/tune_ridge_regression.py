@@ -15,8 +15,8 @@ if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
 
     # Hyperparameters
-    DEGREES = range(10)
-    λs=[10 ** i for i in range(-5, 5)]
+    DEGREES = range(1, 100)
+    λs=[10 ** i for i in range(-10, 10)]
 
     df = (
         # pd.read_csv(
@@ -63,8 +63,8 @@ if __name__ == "__main__":
 
     metrics_df = pd.DataFrame(metrics)
 
-    row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
-    row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
+    # row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
+    # row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
     row_with_min_rmse = metrics_df.loc[metrics_df["rmse"].idxmin()]
 
     axes = sns.heatmap(data=metrics_df.pivot(index="degree", columns="λ", values="rmse"),
