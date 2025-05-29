@@ -32,7 +32,6 @@ if __name__ == "__main__":
             "LandAverageTemperature": "temperature",
         })
         .dropna()
-        # .pipe(apply_min_max_normalization, column="timestamp", new_column="timestamp-norm")
         .set_index("timestamp")
         .asfreq("MS")
     )
@@ -55,5 +54,4 @@ if __name__ == "__main__":
             fontsize=10, bbox=dict(facecolor="white", alpha=0.7))
 
     plt.tight_layout()
-    plt.legend()
     plt.show()
