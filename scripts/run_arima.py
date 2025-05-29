@@ -4,18 +4,10 @@ from matplotlib import pyplot as plt
 from krennic.arima import apply_arima_model, train_arima_model
 from krennic.evaluation import evaluate_mae, evaluate_mse, evaluate_rmse
 from krennic.normalization import apply_min_max_normalization
+from krennic.utils import split_into_training_and_testing
 
 
 pd.options.mode.copy_on_write = True
-
-
-def split_into_training_and_testing(df: pd.DataFrame, training_proportion: float) -> tuple[pd.DataFrame, pd.DataFrame]:
-    training_nrows = int(len(df) * training_proportion)
-
-    training_df = df.iloc[:training_nrows, :]
-    testing_df = df.iloc[training_nrows:, :]
-
-    return training_df, testing_df
 
 
 if __name__ == "__main__":

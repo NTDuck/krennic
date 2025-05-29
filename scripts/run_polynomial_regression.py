@@ -3,19 +3,11 @@ import pandas as pd
 
 from krennic.evaluation import evaluate_mae, evaluate_mse, evaluate_rmse
 from krennic.normalization import apply_min_max_normalization
-from krennic.regression import apply_regression_model, train_polynomial_regression_model, train_ridge_regression_model
+from krennic.regression import apply_regression_model, train_polynomial_regression_model
+from krennic.utils import split_into_training_and_testing
 
 
 pd.options.mode.copy_on_write = True
-
-
-def split_into_training_and_testing(df: pd.DataFrame, training_proportion: float) -> tuple[pd.DataFrame, pd.DataFrame]:
-    training_nrows = int(len(df) * training_proportion)
-
-    training_df = df.iloc[:training_nrows, :]
-    testing_df = df.iloc[training_nrows:, :]
-
-    return training_df, testing_df
 
 
 if __name__ == "__main__":
@@ -23,7 +15,6 @@ if __name__ == "__main__":
 
     # Hyperparameters
     DEGREE = 100
-    λ=0.1
 
     df = (
         pd.read_csv(
@@ -40,8 +31,7 @@ if __name__ == "__main__":
 
     training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)
     
-    model = training_df.pipe(train_ridge_regression_model, x_column="timestamp-norm", y_column="temperature", degree=DEGREE, λ=λ)
-    # model = training_df.pipe(train_polynomial_regression_model, x_column="timestamp-norm", y_column="temperature", degree=DEGREE)
+    model = training_df.pipe(train_polynomial_regression_model, x_column="timestamp-norm", y_column="temperature", degree=DEGREE)
     training_df = training_df.pipe(apply_regression_model, x_column="timestamp-norm", y_column="temperature-polyfit", model=model)
     testing_df = testing_df.pipe(apply_regression_model, x_column="timestamp-norm", y_column="temperature-polyfit", model=model)
     
