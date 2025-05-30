@@ -4,7 +4,7 @@ import seaborn as sns
 
 
 if __name__ == "__main__":
-    metrics_df = pd.read_csv("resources/metrics/.csv")
+    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.ridge-regression.2025-05-30 14-40-35.csv")
 
     row_with_min_rmse = metrics_df.loc[metrics_df["rmse"].idxmin()]
 

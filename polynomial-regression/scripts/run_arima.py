@@ -13,7 +13,7 @@ if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
 
     # Hyperparameters
-    ORDER = (2, 1, 2)
+    ORDER = (9, 2, 2)
 
     df = (
         # pd.read_csv(

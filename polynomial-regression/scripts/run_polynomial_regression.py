@@ -14,7 +14,7 @@ if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
 
     # Hyperparameters
-    DEGREE = 100
+    DEGREE = 8
 
     df = (
         # pd.read_csv(

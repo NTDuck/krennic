@@ -3,7 +3,7 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    metrics_df = pd.read_csv("resources/metrics/.csv")
+    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.polynomial-regression.2025-05-30 14-04-42.csv")
 
     row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
     row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]

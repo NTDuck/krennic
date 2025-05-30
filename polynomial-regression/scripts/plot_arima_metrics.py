@@ -3,7 +3,7 @@ import pandas as pd
 
 if __name__ == "__main__":
     metrics_df = pd.read_csv(
-        "resources/metrics/hanoi-aqi-weather-data.arima.2025-05-30 13-20-51.csv"
+        "resources/metrics/hanoi-aqi-weather-data.arima.2025-05-30 14-42-58.csv"
     )
 
     row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]

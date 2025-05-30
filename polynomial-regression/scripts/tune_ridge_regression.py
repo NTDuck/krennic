@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     # Hyperparameters
     DEGREES = range(1, 1000)
-    λs = [10**i for i in range(-10, 10)]
+    λs = [10**i for i in range(-5, 6)]
 
     df = (
         # pd.read_csv(
