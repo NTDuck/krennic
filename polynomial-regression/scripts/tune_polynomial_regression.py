@@ -15,15 +15,38 @@ from krennic.utils import split_into_training_and_testing
 pd.options.mode.copy_on_write = True
 
 
-def __evaluate(training_df: pd.DataFrame, testing_df: pd.DataFrame, degree: int) -> dict:
+def __evaluate(
+    training_df: pd.DataFrame, testing_df: pd.DataFrame, degree: int
+) -> dict:
     try:
-        model = training_df.pipe(train_polynomial_regression_model, x_column="timestamp-norm", y_column="temperature", degree=degree)
-        training_df = training_df.pipe(apply_regression_model, x_column="timestamp-norm", y_column="temperature-polyfit", model=model)
-        testing_df = testing_df.pipe(apply_regression_model, x_column="timestamp-norm", y_column="temperature-polyfit", model=model)
-        
-        mae = evaluate_mae(y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"])
-        mse = evaluate_mse(y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"])
-        rmse = evaluate_rmse(y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"])
+        model = training_df.pipe(
+            train_polynomial_regression_model,
+            x_column="timestamp-norm",
+            y_column="temperature",
+            degree=degree,
+        )
+        training_df = training_df.pipe(
+            apply_regression_model,
+            x_column="timestamp-norm",
+            y_column="temperature-polyfit",
+            model=model,
+        )
+        testing_df = testing_df.pipe(
+            apply_regression_model,
+            x_column="timestamp-norm",
+            y_column="temperature-polyfit",
+            model=model,
+        )
+
+        mae = evaluate_mae(
+            y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"]
+        )
+        mse = evaluate_mse(
+            y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"]
+        )
+        rmse = evaluate_rmse(
+            y=testing_df["temperature"], ŷ=testing_df["temperature-polyfit"]
+        )
 
     except:
         mae, mse, rmse = np.nan, np.nan, np.nan
@@ -34,6 +57,7 @@ def __evaluate(training_df: pd.DataFrame, testing_df: pd.DataFrame, degree: int)
         "mse": mse,
         "rmse": rmse,
     }
+
 
 if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
@@ -52,29 +76,49 @@ if __name__ == "__main__":
         # })
         pd.read_csv(
             "resources/datasets/hanoi-aqi-weather-data.csv",
-            usecols=["Local Time", "Temperature"], parse_dates=["Local Time"],
+            usecols=["Local Time", "Temperature"],
+            parse_dates=["Local Time"],
         )
-        .rename(columns={
-            "Local Time": "timestamp",
-            "Temperature": "temperature",
-        })
+        .rename(
+            columns={
+                "Local Time": "timestamp",
+                "Temperature": "temperature",
+            }
+        )
         .dropna()
-        .pipe(apply_min_max_normalization, column="timestamp", new_column="timestamp-norm")
+        .pipe(
+            apply_min_max_normalization, column="timestamp", new_column="timestamp-norm"
+        )
     )
 
-    training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)
+    training_df, testing_df = df.pipe(
+        split_into_training_and_testing, training_proportion=TRAINING_PROPORTION
+    )
 
     csv_path = f"resources/metrics/hanoi-aqi-weather-data.polynomial-regression.{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv"
 
     try:
         with ProcessPoolExecutor(max_workers=min(4, os.cpu_count())) as executor:
-            futures = [executor.submit(__evaluate, training_df=training_df.copy(), testing_df=testing_df.copy(), degree=degree) for degree in DEGREES]
+            futures = [
+                executor.submit(
+                    __evaluate,
+                    training_df=training_df.copy(),
+                    testing_df=testing_df.copy(),
+                    degree=degree,
+                )
+                for degree in DEGREES
+            ]
 
             with tqdm(total=len(futures), desc="Tuning") as pbar:
                 for future in as_completed(futures):
-                    pd.DataFrame([future.result()]).to_csv(csv_path, mode="a", header=not os.path.exists(csv_path), index=False)
+                    pd.DataFrame([future.result()]).to_csv(
+                        csv_path,
+                        mode="a",
+                        header=not os.path.exists(csv_path),
+                        index=False,
+                    )
                     pbar.update(1)
-    
+
     except KeyboardInterrupt:
         executor.shutdown(wait=False, cancel_futures=True)
 
@@ -85,7 +129,7 @@ if __name__ == "__main__":
     # row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
     # row_with_min_rmse = metrics_df.loc[metrics_df["rmse"].idxmin()]
 
-    # axes = metrics_df.plot(x="degree", y=["mae", "mse", "rmse"], 
+    # axes = metrics_df.plot(x="degree", y=["mae", "mse", "rmse"],
     #                        color=["orange", "blue", "red"], label=["MAE", "MSE", "RMSE"])
     # axes.text(0.97, 0.03, f"""Lowest MAE = {row_with_min_mae["mae"]:.2f} (n={row_with_min_mae["degree"]:.0f})
     #                         \nLowest MSE = {row_with_min_mse["mse"]:.2f} (n={row_with_min_mse["degree"]:.0f})

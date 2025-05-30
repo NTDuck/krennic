@@ -24,7 +24,8 @@ jobs:
         python-version:
           - "3.x"
         source-dir-path:
-          - "./krennic"
+        # We do not lint the work of our follow comrades
+          - "./polynomial-regression"
         tests-dir-path:
           - "./tests"
 

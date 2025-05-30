@@ -5,14 +5,20 @@ Datasets:
 
 How to run stuff:
 ```cmd
+cd polynomial-regression
 
 =======
-python -m scripts.run_polynomial_regression
-python -m scripts.run_ridge_regression
-python -m scripts.run_arima
-python -m scripts.run_prophet
 
 python -m scripts.tune_polynomial_regression
 python -m scripts.tune_ridge_regression
 python -m scripts.tune_arima
+
+python -m scripts.plot_polynomial_regression
+python -m scripts.plot_ridge_regression
+python -m scripts.plot_arima
+
+python -m scripts.run_polynomial_regression
+python -m scripts.run_ridge_regression
+python -m scripts.run_arima
+python -m scripts.run_prophet
 ```
