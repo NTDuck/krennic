@@ -1,4 +1,5 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from tqdm import tqdm
 from datetime import datetime
 import os
 import warnings
@@ -72,8 +73,14 @@ if __name__ == "__main__":
 
     csv_path = f"resources/metrics/hanoi-aqi-weather-data.arima.{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv"
 
-    with ProcessPoolExecutor(max_workers=4) as executor:
-        futures = [executor.submit(__evaluate, training_df=training_df.copy(), testing_df=testing_df.copy(), order=order) for order in ORDERS]
+    try:
+        with ProcessPoolExecutor(max_workers=min(4, os.cpu_count())) as executor:
+            futures = [executor.submit(__evaluate, training_df=training_df.copy(), testing_df=testing_df.copy(), order=order) for order in ORDERS]
 
-        for future in as_completed(futures):
-            pd.DataFrame([future.result()]).to_csv(csv_path, mode="a", header=not os.path.exists(csv_path), index=False)
+            with tqdm(total=len(futures), desc="Tuning") as pbar:
+                for future in as_completed(futures):
+                    pd.DataFrame([future.result()]).to_csv(csv_path, mode="a", header=not os.path.exists(csv_path), index=False)
+                    pbar.update(1)
+
+    except KeyboardInterrupt:
+        executor.shutdown(wait=False, cancel_futures=True)
