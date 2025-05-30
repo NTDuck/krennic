@@ -1,4 +1,6 @@
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
+import os
 import warnings
 import numpy as np
 import pandas as pd
@@ -15,14 +17,34 @@ warnings.filterwarnings("ignore", category=ConvergenceWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
 
+def __evaluate(training_df: pd.DataFrame, testing_df: pd.DataFrame, order: tuple[int, int, int]) -> dict:
+    try:
+        model = training_df.pipe(train_arima_model, y_column="temperature", order=order)
+        testing_df = testing_df.pipe(apply_arima_model, y_column="temperature-arima", model=model)
+
+        mae = evaluate_mae(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
+        mse = evaluate_mse(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
+        rmse = evaluate_rmse(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
+
+    except:
+        mae, mse, rmse = np.nan, np.nan, np.nan
+
+    return {
+        "p": order[0],
+        "d": order[1],
+        "q": order[2],
+        "mae": mae,
+        "mse": mse,
+        "rmse": rmse,
+    }
+
 if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
 
     # Hyperparameters
-    PS = range(1, 10)
-    DS = range(1, 10)
-    QS = range(1, 10)
-    
+    __MAX_ORDER = 10
+    ORDERS = [(p, d, q) for p in range(1, __MAX_ORDER) for d in range(1, __MAX_ORDER) for q in range(1, __MAX_ORDER)]
+
     df = (
         # pd.read_csv(
         #     "resources/datasets/GlobalTemperatures.csv",
@@ -48,41 +70,10 @@ if __name__ == "__main__":
 
     training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)
 
-    metrics = []
+    csv_path = f"resources/metrics/hanoi-aqi-weather-data.arima.{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv"
 
-    for p in PS:
-        for d in DS:
-            for q in QS:
-                training_df = training_df.copy()
-                testing_df = testing_df.copy()
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(__evaluate, training_df=training_df.copy(), testing_df=testing_df.copy(), order=order) for order in ORDERS]
 
-                try:
-                    model = training_df.pipe(train_arima_model, y_column="temperature", order=(p, d, q))
-                    testing_df = testing_df.pipe(apply_arima_model, y_column="temperature-arima", model=model)
-
-                    mae = evaluate_mae(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
-                    mse = evaluate_mse(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
-                    rmse = evaluate_rmse(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
-
-                except:
-                    mae, mse, rmse = np.nan, np.nan, np.nan
-
-                metrics.append({
-                    "p": p,
-                    "d": d,
-                    "q": q,
-                    "mae": mae,
-                    "mse": mse,
-                    "rmse": rmse,
-                })
-
-    metrics_df = pd.DataFrame(metrics)
-    metrics_df.to_csv(f"resources/metrics/hanoi-aqi-weather-data.arima.{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv")
-
-    row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
-    row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
-    row_with_min_rmse = metrics_df.loc[metrics_df["rmse"].idxmin()]
-
-    print(f"""Lowest MAE = {row_with_min_mae["mae"]:.2f} (p={row_with_min_mae["p"]:.0f}, d={row_with_min_mae["d"]:.0f}, q={row_with_min_mae["q"]:.0f})\
-              Lowest MSE = {row_with_min_mse["mse"]:.2f} (p={row_with_min_mse["p"]:.0f}, d={row_with_min_mse["d"]:.0f}, q={row_with_min_mse["q"]:.0f})\
-              Lowest RMSE = {row_with_min_rmse["rmse"]:.2f} (p={row_with_min_rmse["p"]:.0f}, d={row_with_min_rmse["d"]:.0f}, q={row_with_min_rmse["q"]:.0f})""")
+        for future in as_completed(futures):
+            pd.DataFrame([future.result()]).to_csv(csv_path, mode="a", header=not os.path.exists(csv_path), index=False)

@@ -13,7 +13,7 @@ if __name__ == "__main__":
     TRAINING_PROPORTION = 0.75
 
     # Hyperparameters
-    ARIMA_ORDER = (2, 1, 2)
+    ORDER = (2, 1, 2)
 
     df = (
         # pd.read_csv(
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     training_df, testing_df = df.pipe(split_into_training_and_testing, training_proportion=TRAINING_PROPORTION)
 
-    model = training_df.pipe(train_arima_model, y_column="temperature", order=ARIMA_ORDER)
+    model = training_df.pipe(train_arima_model, y_column="temperature", order=ORDER)
     testing_df = testing_df.pipe(apply_arima_model, y_column="temperature-arima", model=model)
 
     mae = evaluate_mae(y=testing_df["temperature"], ŷ=testing_df["temperature-arima"])
