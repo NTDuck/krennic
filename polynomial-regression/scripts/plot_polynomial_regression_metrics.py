@@ -3,7 +3,7 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.polynomial-regression.2025-05-30 14-04-42.csv")
+    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.polynomial-regression.2025-06-12 16-18-48.csv")
 
     row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
     row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
@@ -11,9 +11,12 @@ if __name__ == "__main__":
 
     axes = metrics_df.plot(
         x="degree",
-        y=["mae", "mse", "rmse"],
-        color=["orange", "blue", "red"],
-        label=["MAE", "MSE", "RMSE"],
+        # y=["mae", "mse", "rmse"],
+        y="time",
+        # color=["orange", "blue", "red"],
+        color="blue",
+        # label=["MAE", "MSE", "RMSE"],
+        label="time (s)",
     )
     axes.text(
         0.97,

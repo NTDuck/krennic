@@ -4,24 +4,24 @@ import seaborn as sns
 
 
 if __name__ == "__main__":
-    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.ridge-regression.2025-05-30 14-40-35.csv")
+    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.ridge-regression.2025-06-12 16-45-28.csv")
 
-    row_with_min_rmse = metrics_df.loc[metrics_df["rmse"].idxmin()]
+    row_with_min_rmse = metrics_df.loc[metrics_df["time"].idxmin()]
 
     axes = sns.heatmap(
-        data=metrics_df.pivot(index="degree", columns="λ", values="rmse"),
+        data=metrics_df.pivot(index="degree", columns="λ", values="time"),
         annot=True,
         fmt=".2f",
         cmap="coolwarm_r",
     )
-    plt.title("RMSE Heatmap")
+    plt.title("Time Heatmap")
     plt.xlabel("λ")
     plt.ylabel("Degree")
 
     axes.text(
         0.97,
         0.03,
-        f"""Lowest RMSE = {row_with_min_rmse["rmse"]:.2f} (n={row_with_min_rmse["degree"]:.0f}, λ={row_with_min_rmse["λ"]})""",
+        f"""Lowest time = {row_with_min_rmse["time"]:.2f} (n={row_with_min_rmse["degree"]:.0f}, λ={row_with_min_rmse["λ"]})""",
         transform=axes.transAxes,
         horizontalalignment="right",
         verticalalignment="bottom",
