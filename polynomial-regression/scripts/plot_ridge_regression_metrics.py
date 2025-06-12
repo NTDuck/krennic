@@ -6,7 +6,7 @@ import seaborn as sns
 if __name__ == "__main__":
     metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.ridge-regression.2025-06-12 17-54-11.csv")
 
-    row_with_min_rmse = metrics_df.loc[metrics_df["time"].idxmin()]
+    row_with_min_rmse = metrics_df.loc[metrics_df["mae"].idxmin()]
 
     axes = sns.heatmap(
         data=metrics_df.pivot(index="degree", columns="λ", values="time"),
@@ -14,14 +14,14 @@ if __name__ == "__main__":
         fmt=".0e",
         cmap="coolwarm_r",
     )
-    plt.title("Time Heatmap (ns)")
+    plt.title("MAE Heatmap")
     plt.xlabel("λ")
     plt.ylabel("Degree")
 
     axes.text(
         0.97,
         0.03,
-        f"""Lowest time = {row_with_min_rmse["time"]:.2f} ns (n={row_with_min_rmse["degree"]:.0f}, λ={row_with_min_rmse["λ"]})""",
+        f"""Lowest MAE = {row_with_min_rmse["mae"]:.2f} (n={row_with_min_rmse["degree"]:.0f}, λ={row_with_min_rmse["λ"]})""",
         transform=axes.transAxes,
         horizontalalignment="right",
         verticalalignment="bottom",
