@@ -19,7 +19,7 @@ pd.options.mode.copy_on_write = True
 def __evaluate(
     training_df: pd.DataFrame, testing_df: pd.DataFrame, degree: int
 ) -> dict:
-    start_time = time.perf_counter()
+    start_time = time.perf_counter_ns()
     
     try:
         model = training_df.pipe(
@@ -54,7 +54,7 @@ def __evaluate(
     except:
         mae, mse, rmse = np.nan, np.nan, np.nan
 
-    elapsed_time = time.perf_counter() - start_time
+    elapsed_time = time.perf_counter_ns() - start_time
 
     return {
         "degree": degree,
