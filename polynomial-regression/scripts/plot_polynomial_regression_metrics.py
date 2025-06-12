@@ -3,7 +3,7 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.polynomial-regression.2025-06-12 16-18-48.csv")
+    metrics_df = pd.read_csv("resources/metrics/hanoi-aqi-weather-data.polynomial-regression.2025-06-12 17-33-52.csv")
 
     row_with_min_mae = metrics_df.loc[metrics_df["mae"].idxmin()]
     row_with_min_mse = metrics_df.loc[metrics_df["mse"].idxmin()]
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         # color=["orange", "blue", "red"],
         color="blue",
         # label=["MAE", "MSE", "RMSE"],
-        label="time (s)",
+        label="time (ns)",
     )
     axes.text(
         0.97,
